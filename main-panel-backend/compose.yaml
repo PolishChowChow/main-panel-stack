@@ -32,6 +32,14 @@ services:
       CORS_ORIGINS: ${CORS_ORIGINS}
     ports:
       - "4000:4000"
+  web:
+    build:
+      context: ../main-panel
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+    restart: unless-stopped
+    ports:
+      - "4173:4173"
 
 volumes:
   mysql_data:
