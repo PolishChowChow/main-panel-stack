@@ -35,7 +35,11 @@ jobs:
 
       - name: Check API URL
         if: matrix.name == 'web'
-        run: test -n "${{ vars.VITE_API_URL }}" || (echo "VITE_API_URL is empty" && exit 1)
+        env:
+          API_URL: ${{ vars.VITE_API_URL }}
+        run: |
+          if [ -z "$VITE_API_RUL" ]; then echo "VITE_API_URL is EMPTY"; exit 1; fi
+          echo "VITE_API_URL is set (${#API_URL} chars)"
 
       - uses: docker/build-push-action@v6
         with:
