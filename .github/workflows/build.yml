@@ -33,6 +33,10 @@ jobs:
       - name: Lowercase owner
         run: echo "OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
 
+      - name: Check API URL
+        if: matrix.name == 'web'
+        run: test -n "${{ vars.PROD_API_URL }}" || (echo "PROD_API_URL is empty" && exit 1)
+        
       - uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.context }}
