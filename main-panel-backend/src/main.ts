@@ -1,14 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const config = app.get(ConfigService);
+  const allowed = (config.get<string>('CORS_ORIGINS') ?? '')
+    .split(',')
+    .map((o) => o.trim().replace(/\/+$/, ''))
+    .filter(Boolean);
   app.enableCors({
-  origin: ['http://localhost:5173', 'http://localhost:4173', 'http://web:4173', 'http://100.122.157.69:4173', 'https://vps-enchanted-forrest.com'], // your frontend origin(s)
+  origin: (origin: string, cb: (arg0: null, arg1: boolean) => void) => {
+      if (!origin || allowed.includes(origin)) return cb(null, true);
+      console.warn('CORS rejected:', JSON.stringify(origin));
+      cb(null, false);
+    },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   maxAge: 86400,   
-//  origin: true
 });
   await app.listen(process.env.PORT ?? 4000);
 }

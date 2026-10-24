@@ -18,7 +18,7 @@ services:
       retries: 10
 
   api:
-    build: ./
+    build: ./main-panel-backend
     restart: unless-stopped
     depends_on:
       mysql:
@@ -34,7 +34,7 @@ services:
       - "4000:4000"
   web:
     build:
-      context: ../main-panel
+      context: ./main-panel
       args:
         VITE_API_URL: ${VITE_API_URL}
     restart: unless-stopped
