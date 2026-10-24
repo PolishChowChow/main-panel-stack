@@ -1,0 +1,5 @@
+npm run start:dev
+
+curl -X POST http://localhost:3000/tiles -H "Content-Type: application/json" -d '{"title":"First item","url":"Hello MySQL"}'
+
+curl http://localhost:3000/tiles
