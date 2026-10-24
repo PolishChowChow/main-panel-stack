@@ -38,7 +38,7 @@ jobs:
           context: ${{ matrix.context }}
           push: true
           build-args: |
-            VITE_API_URL=${{ vars.PROD_API_URL }}
+            VITE_API_URL=${{ vars.VITE_API_URL }}
           tags: |
             ghcr.io/${{ env.OWNER }}/main-panel-${{ matrix.name }}:latest
             ghcr.io/${{ env.OWNER }}/main-panel-${{ matrix.name }}:${{ github.sha }}
