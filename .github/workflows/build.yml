@@ -18,7 +18,7 @@ jobs:
           - name: api
             context: ./main-panel-backend
           - name: web
-            context: ./<react-app>
+            context: ./main-panel
     steps:
       - uses: actions/checkout@v4
 
