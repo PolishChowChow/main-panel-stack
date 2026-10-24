@@ -38,7 +38,7 @@ jobs:
         env:
           API_URL: ${{ vars.VITE_API_URL }}
         run: |
-          if [ -z "$VITE_API_RUL" ]; then echo "VITE_API_URL is EMPTY"; exit 1; fi
+          if [ -z "$VITE_API_URL" ]; then echo "VITE_API_URL is EMPTY"; exit 1; fi
           echo "VITE_API_URL is set (${#API_URL} chars)"
 
       - uses: docker/build-push-action@v6
