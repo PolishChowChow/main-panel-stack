@@ -3,7 +3,7 @@ import type { ITile } from "../types/ITile";
 
 export class tilesService {
 
-    static url: string =`${import.meta.env.VITE_BACKEND_URL}/tiles`;
+    static url: string =`${import.meta.env.VITE_API_URL}/tiles`;
 
     static async getTiles():Promise<ITile[]> {
         const response = await axios.get(tilesService.url)
