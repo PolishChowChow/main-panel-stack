@@ -85,5 +85,5 @@ jobs:
           printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519 \
+          ssh -6 -o BatchMode=yes -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519 \
             -p "${SSH_PORT:-22}" "$SSH_USER@$SSH_HOST" deploy
