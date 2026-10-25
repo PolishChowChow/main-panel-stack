@@ -58,6 +58,21 @@ jobs:
     runs-on: ubuntu-latest
     concurrency: deploy-prod
     steps:
+      - name: Diagnose connectivity
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          PORT="${SSH_PORT:-22}"
+          echo "host length: ${#SSH_HOST}, port: ${PORT:+set}"
+          case "$SSH_HOST" in
+            100.*) echo "host is in 100.x (Tailscale/CGNAT): not reachable from GitHub" ;;
+            *[!0-9.]*) echo "host is a hostname" ;;
+            *) echo "host is an IPv4 address" ;;
+          esac
+          echo "IPv4 records: $(getent ahostsv4 "$SSH_HOST" | wc -l)"
+          echo "IPv6 records: $(getent ahostsv6 "$SSH_HOST" | wc -l)"
+          nc -4 -z -w 10 "$SSH_HOST" "$PORT" && echo "TCP over IPv4: reachable" || echo "TCP over IPv4: NOT reachable"
       - name: Deploy over SSH
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
