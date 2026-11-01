@@ -1,14 +1,15 @@
 
 import { useEffect } from "react";
 
-interface ModalProps {
+type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  isAbortable?: boolean;
 };
 
-export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, children, isAbortable }: ModalProps) {
   useEffect(() => {
     if (!isOpen) return;
 
@@ -47,14 +48,15 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
             {title}
           </h2>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close modal"
-            className="rounded-md px-3 py-1 text-gray-500 hover:bg-gray-100"
-          >
+          {isAbortable && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close modal"
+              className="rounded-md px-3 py-1 text-gray-500 hover:bg-gray-100"
+            >
             Abort
-          </button>
+          </button>)}
         </div>
         <div>{children}</div>
       </div>
