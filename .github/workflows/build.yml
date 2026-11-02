@@ -52,38 +52,3 @@ jobs:
             ghcr.io/${{ env.OWNER }}/main-panel-${{ matrix.name }}:${{ github.sha }}
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,scope=${{ matrix.name }},mode=max
-  deploy:
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    concurrency: deploy-prod
-    steps:
-      - name: Diagnose connectivity
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-        run: |
-          PORT="${SSH_PORT:-22}"
-          echo "host length: ${#SSH_HOST}, port: ${PORT:+set}"
-          case "$SSH_HOST" in
-            100.*) echo "host is in 100.x (Tailscale/CGNAT): not reachable from GitHub" ;;
-            *[!0-9.]*) echo "host is a hostname" ;;
-            *) echo "host is an IPv4 address" ;;
-          esac
-          echo "IPv4 records: $(getent ahostsv4 "$SSH_HOST" | wc -l)"
-          echo "IPv6 records: $(getent ahostsv6 "$SSH_HOST" | wc -l)"
-          nc -4 -z -w 10 "$SSH_HOST" "$PORT" && echo "TCP over IPv4: reachable" || echo "TCP over IPv4: NOT reachable"
-      - name: Deploy over SSH
-        env:
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-        run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -6 -o BatchMode=yes -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519 \
-            -p "${SSH_PORT:-22}" "$SSH_USER@$SSH_HOST" deploy
